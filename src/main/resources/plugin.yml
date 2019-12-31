@@ -1,0 +1,8 @@
+name: ${project.artifactId}
+main: ${project.groupId}.${project.artifactId}
+version: ${project.version}
+api-version: 1.15
+commands:
+  potions:
+    description: Toggles potion effects
+    usage: /potions [targetuser] (potiontype) [on|off]
