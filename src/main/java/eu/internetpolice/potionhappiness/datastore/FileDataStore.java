@@ -68,6 +68,7 @@ public class FileDataStore implements IDataStore {
 
     @Override
     public void save() {
+        dataStore.set("users", new HashMap<>());
         effsEnabled.forEach((player, userMap) ->
                 dataStore.set(String.format("users.%s", player.toString()), userMapToStringList(userMap)));
 

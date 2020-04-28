@@ -6,9 +6,8 @@ import eu.internetpolice.potionhappiness.datastore.IDataStore;
 import eu.internetpolice.potionhappiness.listener.RefreshEvents;
 import eu.internetpolice.potionhappiness.task.AutoSaveTask;
 import eu.internetpolice.potionhappiness.task.RefreshEffectTask;
-import org.apache.commons.lang.NotImplementedException;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +25,11 @@ public class PotionHappiness extends JavaPlugin {
         potionManager = new PotionManager(this);
 
         getServer().getPluginManager().registerEvents(new RefreshEvents(this), this);
-        getCommand("potions").setExecutor(new PotionsCommand(this));
+
+        PluginCommand potionsCmd = getCommand("potions");
+        PotionsCommand commandHandler = new PotionsCommand(this);
+        potionsCmd.setExecutor(commandHandler);
+        potionsCmd.setTabCompleter(commandHandler);
 
         autoSaveTask = new AutoSaveTask(this).runTaskTimer(this, 20L, 1200L);
         refreshEffectTask = new RefreshEffectTask(this).runTaskTimer(this, 20L, 6000L);

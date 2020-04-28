@@ -5,29 +5,67 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.potion.PotionEffectType;
+import org.bukkit.command.TabCompleter;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class PotionsCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public class PotionsCommand implements CommandExecutor, TabCompleter {
+    private Map<String, AbstractPotionsCommand> commandMap = new HashMap<>();
     private PotionHappiness plugin;
 
     public PotionsCommand(PotionHappiness plugin) {
         this.plugin = plugin;
+
+        registerCommand(new PotionsClearCommand(plugin));
+    }
+
+    private void registerCommand(AbstractPotionsCommand command) {
+        String alias = command.getAlias().toLowerCase(java.util.Locale.ENGLISH).trim();
+        if (!commandMap.containsKey(alias)) {
+            commandMap.put(alias, command);
+        }
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (args.length == 1) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage(ChatColor.RED + "Error: You need to specify a target user when executing this " +
-                        "command as a non-player.");
-                return true;
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        boolean success = false;
+        if (args.length == 0) {
+            if (commandMap.containsKey("main")) {
+                success = commandMap.get("main").onCommand(sender, command, label, args);
             }
-
-            Player player = (Player) sender;
-            plugin.getPotionManager().applyPotionEffect(PotionEffectType.BLINDNESS, player);
+        } else {
+            if (commandMap.containsKey(args[0])) {
+                success = commandMap.get(args[0]).onCommand(sender, command, label, args);
+            }
         }
 
-        return false;
+        if (!success) {
+            sender.sendMessage(ChatColor.DARK_RED + "ERROR: " +
+                    ChatColor.RESET + "Unknown command. Use \"/potions help\" for help.");
+        }
+        return true;
+    }
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        List<String> suggestions = new ArrayList<>();
+
+        // Args length should always be 1 or higher for tab complete, but inculding 0 to be sure.
+        if (args.length <= 1) {
+            suggestions.addAll(commandMap.keySet());
+        } else {
+            if (commandMap.containsKey(args[0])) {
+                suggestions.addAll(commandMap.get(args[0]).onTabComplete(sender, command, alias, args));
+            }
+        }
+        plugin.getLogger().info(String.format("%s - %s", args.length, suggestions.toString()));
+
+        suggestions.sort(String::compareTo);
+        return suggestions;
     }
 }

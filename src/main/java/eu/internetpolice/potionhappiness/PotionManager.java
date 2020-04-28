@@ -35,6 +35,15 @@ public class PotionManager {
         plugin.getDataStore().enablePotionEffect(type, amplifier, player);
     }
 
+    public void clearPotionEffects(OfflinePlayer player) {
+        if (player.isOnline()) {
+            Player oPlayer = (Player) player;
+            oPlayer.getActivePotionEffects().forEach((effect) -> oPlayer.removePotionEffect(effect.getType()));
+        }
+
+        plugin.getDataStore().clearPotionEffects(player);
+    }
+
     public void refreshPotionEffect(PotionEffectType type, int amplifier, Player player) {
         PotionEffect effect = new PotionEffect(type, DURATION, checkAmplifier(amplifier));
         effect.apply(player);
