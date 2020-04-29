@@ -62,8 +62,10 @@ public class FileDataStore implements IDataStore {
 
     private void loadAll() {
         ConfigurationSection userSection = dataStore.getConfigurationSection("users");
-        userSection.getValues(false).forEach((uniqueId, potionList) ->
+        if (userSection != null) {
+            userSection.getValues(false).forEach((uniqueId, potionList) ->
                 effsEnabled.put(UUID.fromString(uniqueId), stringListToUserMap((List<String>) potionList)));
+        }
     }
 
     @Override
