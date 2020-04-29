@@ -36,10 +36,34 @@ public abstract class AbstractPotionsCommand {
         return alias;
     }
 
-    protected boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+    /**
+     * Executes the given command, returning its success.
+     *
+     * If false is returned, the plugin will send an error message to the user referring to the help command.
+     *
+     * @param sender Source of the command
+     * @param command Command which was executed
+     * @param label Alias of the command which was used
+     * @param args Passed command arguments
+     * @return true if a valid command, otherwise false
+     */
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         return true;
     }
 
+    /**
+     * Requests a list of possible completions for a command argument.
+     *
+     * @param sender Source of the command.  For players tab-completing a
+     *     command inside of a command block, this will be the player, not
+     *     the command block.
+     * @param command Command which was executed
+     * @param alias The alias used
+     * @param args The arguments passed to the command, including final
+     *     partial argument to be completed and command label
+     * @return A List of possible completions for the final argument, or null
+     *     to default to the command executor
+     */
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         return new ArrayList<>();
     }
@@ -75,10 +99,22 @@ public abstract class AbstractPotionsCommand {
         return null;
     }
 
+    /**
+     * Checks if the given String is a valid playername.
+     *
+     * @param input String to check.
+     * @return True if valid, false otherwise.
+     */
     protected boolean isValidPlayerName(@NotNull String input) {
         return input.matches(REGEX_VALID_NAME);
     }
 
+    /**
+     * Checks if the given String is a valid UUID. Accepts both dashed and plain UUIDs.
+     *
+     * @param input String to check.
+     * @return True if valid, false otherwise.
+     */
     protected boolean isValidUniqueId(@NotNull String input) {
         return input.matches(REGEX_VALID_DASHED_UUID) || input.matches(REGEX_VALID_PLAIN_UUID);
     }

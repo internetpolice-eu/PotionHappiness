@@ -35,9 +35,10 @@ public class PotionsCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         boolean success = false;
         if (args.length == 0) {
-            if (commandMap.containsKey("main")) {
-                success = commandMap.get("main").onCommand(sender, command, label, args);
-            }
+            sender.sendMessage(ChatColor.GOLD + "You can use the following potion effects: " +
+                ChatColor.RESET + plugin.getPotionManager().getAvailableEffects().toString());
+            sender.sendMessage(ChatColor.GOLD + "Use \"/potions help\" for help.");
+            success = true;
         } else {
             if (commandMap.containsKey(args[0])) {
                 success = commandMap.get(args[0]).onCommand(sender, command, label, args);
@@ -63,8 +64,6 @@ public class PotionsCommand implements CommandExecutor, TabCompleter {
                 suggestions.addAll(commandMap.get(args[0]).onTabComplete(sender, command, alias, args));
             }
         }
-        plugin.getLogger().info(String.format("%s - %s", args.length, suggestions.toString()));
-
         suggestions.sort(String::compareTo);
         return suggestions;
     }
