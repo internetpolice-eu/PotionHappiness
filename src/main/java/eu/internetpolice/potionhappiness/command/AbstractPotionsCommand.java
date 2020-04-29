@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -19,6 +20,7 @@ public abstract class AbstractPotionsCommand {
     protected final String MSG_NO_PERMISSION = ChatColor.RED + "I'm sorry, but you do not have permission to perform " +
             "this command. Please contact the server administrators if you believe that this is in error.";
     protected final String MSG_PLAYER_NOT_FOUND = ChatColor.RED + "Error: The requested player cannot be found.";
+    protected final String MSG_POTION_NOT_FOUND = ChatColor.RED + "Error: The requested potion effect (%s) cannot be found.";
     protected final String MSG_TARGET_REQUIRED = ChatColor.RED + "Error: You need to specify a target user when " +
             "executing this command as a non-player.";
 
@@ -66,6 +68,18 @@ public abstract class AbstractPotionsCommand {
      */
     public @NotNull List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         return new ArrayList<>();
+    }
+
+    protected PotionEffectType getPotionEffectType(String input) throws PotionNotFoundException {
+        if (input == null) {
+            throw new PotionNotFoundException();
+        }
+
+        PotionEffectType foundEffect = PotionEffectType.getByName(input);
+        if (foundEffect == null) {
+            throw new PotionNotFoundException();
+        }
+        return foundEffect;
     }
 
     protected Player getOnlinePlayer(CommandSender requester, String input) throws PlayerNotFoundException {

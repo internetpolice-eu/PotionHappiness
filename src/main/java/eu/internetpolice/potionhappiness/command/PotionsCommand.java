@@ -22,6 +22,7 @@ public class PotionsCommand implements CommandExecutor, TabCompleter {
         this.plugin = plugin;
 
         registerCommand(new PotionsClearCommand(plugin));
+        registerCommand(new PotionsRemoveCommand(plugin));
     }
 
     private void registerCommand(AbstractPotionsCommand command) {
@@ -46,8 +47,7 @@ public class PotionsCommand implements CommandExecutor, TabCompleter {
         }
 
         if (!success) {
-            sender.sendMessage(ChatColor.DARK_RED + "ERROR: " +
-                    ChatColor.RESET + "Unknown command. Use \"/potions help\" for help.");
+            sender.sendMessage(ChatColor.RED + "Error: " + "Unknown command. Use \"/potions help\" for help.");
         }
         return true;
     }

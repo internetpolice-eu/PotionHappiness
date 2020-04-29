@@ -15,7 +15,7 @@ public class PotionsClearCommand extends AbstractPotionsCommand {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!sender.hasPermission("potions.cleareffects")) {
+        if (!sender.hasPermission("potions.clear")) {
             sender.sendMessage(MSG_NO_PERMISSION);
             return true;
         }
@@ -35,7 +35,7 @@ public class PotionsClearCommand extends AbstractPotionsCommand {
 
         //potions clear <other> - User requests clearing of others potion effects
         else if (args.length == 2) {
-            if (!sender.hasPermission("potions.cleareffects.others")) {
+            if (!sender.hasPermission("potions.clear.others")) {
                 sender.sendMessage(MSG_NO_PERMISSION);
                 return true;
             }

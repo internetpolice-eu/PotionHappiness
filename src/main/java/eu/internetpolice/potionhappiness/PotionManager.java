@@ -32,9 +32,9 @@ public class PotionManager {
         }
 
         if (player.isOnline()) {
-            Player onlinePlayer = (Player) player;
+            Player oPlayer = (Player) player;
             PotionEffect effect = new PotionEffect(type, DURATION, checkAmplifier(amplifier));
-            effect.apply(onlinePlayer);
+            effect.apply(oPlayer);
         }
 
         plugin.getDataStore().enablePotionEffect(type, amplifier, player);
@@ -47,6 +47,15 @@ public class PotionManager {
         }
 
         plugin.getDataStore().clearPotionEffects(player);
+    }
+
+    public void removePotionEffect(PotionEffectType type, OfflinePlayer player) {
+        if (player.isOnline()) {
+            Player oPlayer = (Player) player;
+            oPlayer.removePotionEffect(type);
+        }
+
+        plugin.getDataStore().disablePotionEffect(type, player);
     }
 
     public void refreshPotionEffect(PotionEffectType type, int amplifier, Player player) {
