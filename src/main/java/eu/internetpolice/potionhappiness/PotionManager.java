@@ -1,31 +1,32 @@
 package eu.internetpolice.potionhappiness;
 
+import eu.internetpolice.potionhappiness.api.IPotionManager;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
-public class PotionManager {
+public class PotionManager implements IPotionManager {
     private PotionHappiness plugin;
-
-    private static final int DEFAULT_AMPLIFIER = 0;
-    // 3600 seconds * 20 ticks per second = 1 hour
-    private static final int DURATION = 72000;
 
     PotionManager(PotionHappiness plugin) {
         this.plugin = plugin;
     }
 
-    public void applyPotionEffect(PotionEffectType type, OfflinePlayer player) {
+    @Override
+    public void applyPotionEffect(@NotNull PotionEffectType type, @NotNull OfflinePlayer player) {
         applyPotionEffect(type, DEFAULT_AMPLIFIER, player);
     }
 
-    public void applyPotionEffect(PotionEffectType type, int amplifier, OfflinePlayer player) {
+    @Override
+    public void applyPotionEffect(@NotNull PotionEffectType type, int amplifier, @NotNull OfflinePlayer player) {
         // Amplifiers above 9 don't work in-game and get reset to the default.
         if (amplifier > 9) {
             amplifier = 9;
@@ -33,14 +34,15 @@ public class PotionManager {
 
         if (player.isOnline()) {
             Player oPlayer = (Player) player;
-            PotionEffect effect = new PotionEffect(type, DURATION, checkAmplifier(amplifier));
+            PotionEffect effect = new PotionEffect(type, DEFAULT_DURATION, checkAmplifier(amplifier));
             effect.apply(oPlayer);
         }
 
         plugin.getDataStore().enablePotionEffect(type, amplifier, player);
     }
 
-    public void clearPotionEffects(OfflinePlayer player) {
+    @Override
+    public void clearPotionEffects(@NotNull OfflinePlayer player) {
         if (player.isOnline()) {
             Player oPlayer = (Player) player;
             oPlayer.getActivePotionEffects().forEach((effect) -> oPlayer.removePotionEffect(effect.getType()));
@@ -49,7 +51,8 @@ public class PotionManager {
         plugin.getDataStore().clearPotionEffects(player);
     }
 
-    public void removePotionEffect(PotionEffectType type, OfflinePlayer player) {
+    @Override
+    public void removePotionEffect(@NotNull PotionEffectType type, @NotNull OfflinePlayer player) {
         if (player.isOnline()) {
             Player oPlayer = (Player) player;
             oPlayer.removePotionEffect(type);
@@ -58,25 +61,27 @@ public class PotionManager {
         plugin.getDataStore().disablePotionEffect(type, player);
     }
 
-    public void refreshPotionEffect(PotionEffectType type, int amplifier, Player player) {
-        PotionEffect effect = new PotionEffect(type, DURATION, checkAmplifier(amplifier));
+    @Override
+    public void refreshPotionEffect(@NotNull PotionEffectType type, int amplifier, @NotNull Player player) {
+        PotionEffect effect = new PotionEffect(type, DEFAULT_DURATION, checkAmplifier(amplifier));
         effect.apply(player);
+    }
+
+    @Override
+    public @Nullable Map<PotionEffectType, Integer> getAppliedEffects(@NotNull OfflinePlayer player) {
+        return plugin.getDataStore().getEnabledPotions(player).orElse(null);
+    }
+
+    @Override
+    public List<String> getAvailableEffects() {
+        List<String> available = new ArrayList<>();
+        Arrays.stream(PotionEffectType.values()).forEach((effect) -> available.add(effect.getName()));
+        available.sort(String::compareTo);
+        return available;
     }
 
     private int checkAmplifier(int amplifier) {
         // Amplifiers above 9 don't work in-game and get reset to the default.
         return Math.min(amplifier, 9);
-    }
-
-    public List<String> getAvailableEffects() {
-        return getAvailableEffects(null);
-    }
-
-    // TODO: Check for which effects the user has permission.
-    public List<String> getAvailableEffects(@Nullable Player player) {
-        List<String> available = new ArrayList<>();
-        Arrays.stream(PotionEffectType.values()).forEach((effect) -> available.add(effect.getName()));
-        available.sort(String::compareTo);
-        return available;
     }
 }
