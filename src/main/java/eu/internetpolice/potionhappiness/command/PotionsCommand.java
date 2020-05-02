@@ -23,6 +23,7 @@ public class PotionsCommand implements CommandExecutor, TabCompleter {
 
         registerCommand(new PotionsClearCommand(plugin));
         registerCommand(new PotionsGiveCommand(plugin));
+        registerCommand(new PotionsLookupCommand(plugin));
         registerCommand(new PotionsRemoveCommand(plugin));
     }
 
