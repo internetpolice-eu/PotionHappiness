@@ -1,8 +1,34 @@
 name: ${project.artifactId}
-main: ${project.groupId}.${project.artifactId}
+main: eu.internetpolice.potionhappiness.${project.artifactId}
 version: ${project.version}
+author: "internetpolice.eu"
 api-version: 1.15
 commands:
   potions:
     description: Toggles potion effects
-    usage: /potions [targetuser] (potiontype) [on|off]
+    usage: /potions [target user] (potiontype) [on|off]
+permissions:
+  potions.clear:
+    description: Clears a users own potions.
+    default: op
+  potions.clear.others:
+    descriptions: Clears another users potions.
+    default: op
+  potions.give:
+    description: Allows a user to give potions to itself.
+    default: op
+  potions.give.others:
+    description: Allows a user to give potions to another user.
+    default: op
+  potions.lookup:
+    description: Allows a user to lookup his own potions.
+    default: op
+  potions.lookup.others:
+    description: Allows a user to lookup another users potions.
+    default: op
+  potions.remove:
+    description: Allows a user to remove his own potions.
+    default: op
+  potions.remove.others:
+    description: Allows a user to remove another users potions.
+    default: op
