@@ -60,6 +60,15 @@ public class FileDataStore implements IDataStore {
         return Optional.ofNullable(effsEnabled.get(player.getUniqueId()));
     }
 
+    @Override
+    public boolean hasPotionEnabled(@NotNull PotionEffectType effect, @NotNull OfflinePlayer player) {
+        if (effsEnabled.containsKey(player.getUniqueId())) {
+            Map<PotionEffectType, Integer> userMap = effsEnabled.get(player.getUniqueId());
+            return userMap.containsKey(effect);
+        }
+        return false;
+    }
+
     private void loadAll() {
         ConfigurationSection userSection = dataStore.getConfigurationSection("users");
         if (userSection != null) {

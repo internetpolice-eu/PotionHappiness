@@ -45,7 +45,11 @@ public class PotionManager implements IPotionManager {
     public void clearPotionEffects(@NotNull OfflinePlayer player) {
         if (player.isOnline()) {
             Player oPlayer = (Player) player;
-            oPlayer.getActivePotionEffects().forEach((effect) -> oPlayer.removePotionEffect(effect.getType()));
+            oPlayer.getActivePotionEffects().forEach((effect) -> {
+                if (plugin.getDataStore().hasPotionEnabled(effect.getType(), oPlayer)) {
+                    oPlayer.removePotionEffect(effect.getType());
+                }
+            });
         }
 
         plugin.getDataStore().clearPotionEffects(player);
@@ -55,7 +59,10 @@ public class PotionManager implements IPotionManager {
     public void removePotionEffect(@NotNull PotionEffectType type, @NotNull OfflinePlayer player) {
         if (player.isOnline()) {
             Player oPlayer = (Player) player;
-            oPlayer.removePotionEffect(type);
+            if (plugin.getDataStore().hasPotionEnabled(type, oPlayer)) {
+                oPlayer.removePotionEffect(type);
+            }
+
         }
 
         plugin.getDataStore().disablePotionEffect(type, player);
@@ -63,8 +70,10 @@ public class PotionManager implements IPotionManager {
 
     @Override
     public void refreshPotionEffect(@NotNull PotionEffectType type, int amplifier, @NotNull Player player) {
-        PotionEffect effect = new PotionEffect(type, DEFAULT_DURATION, checkAmplifier(amplifier));
-        effect.apply(player);
+        if (plugin.getDataStore().hasPotionEnabled(type, player)) {
+            PotionEffect effect = new PotionEffect(type, DEFAULT_DURATION, checkAmplifier(amplifier));
+            effect.apply(player);
+        }
     }
 
     @Override

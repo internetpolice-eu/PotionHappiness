@@ -37,6 +37,15 @@ public interface IDataStore {
     @NotNull Optional<Map<PotionEffectType, Integer>> getEnabledPotions(@NotNull OfflinePlayer player);
 
     /**
+     * Returns if the given {@link OfflinePlayer} has the specified {@link PotionEffectType} applied and managed
+     * by PotionHappiness.
+     * @param effect PotionEffectType to check for.
+     * @param player OfflinePlayer to check.
+     * @return True if applied and managed by PotionHappiness, false otherwise.
+     */
+    boolean hasPotionEnabled(@NotNull PotionEffectType effect, @NotNull OfflinePlayer player);
+
+    /**
      * Flush the currently enabled effects to the datastore. Used in auto-saving tasks and on shutdown.
      */
     void save();
